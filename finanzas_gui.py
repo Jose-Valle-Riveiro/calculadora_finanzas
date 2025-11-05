@@ -24,6 +24,7 @@ class CalculadoraFinanciera:
 
         self.operaciones = [
             "Valor Actual (VA)",
+            "Valor Actual Anualidad (VA)",
             "Valor Futuro (VF)",
             "Pagos / Anualidad (PMT)",
             "Interés / Tasa",
@@ -56,6 +57,10 @@ class CalculadoraFinanciera:
             self.crear_campos(["FV", "Tasa (%)", "Nº periodos"])
             ttk.Button(self.frame_campos, text="Calcular", command=self.calc_va).pack(pady=5)
 
+        elif oper == "Valor Actual Anualidad (VA)":
+            self.crear_campos(["PMT", "Tasa (%)", "Nº periodos"])
+            ttk.Button(self.frame_campos, text="Calcular", command=self.calc_va_annuity).pack(pady=5)
+    
         elif oper == "Valor Futuro (VF)":
             self.crear_campos(["PV", "Tasa (%)", "Nº periodos"])
             ttk.Button(self.frame_campos, text="Calcular", command=self.calc_vf).pack(pady=5)
@@ -101,6 +106,17 @@ class CalculadoraFinanciera:
             r = float(self.entries["Tasa (%)"].get()) / 100
             n = float(self.entries["Nº periodos"].get())
             res = pv_single_sum(fv, r, n)
+            self.resultado_label.config(text=f"VA = {q_format(res)}")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+    def calc_va_annuity(self):
+        try:
+            pmt = float(self.entries["PMT"].get())
+            r = float(self.entries["Tasa (%)"].get()) / 100
+            n = float(self.entries["Nº periodos"].get())
+            due = '3'
+            res = pv_annuity(pmt, r, n, due=due)
             self.resultado_label.config(text=f"VA = {q_format(res)}")
         except Exception as e:
             messagebox.showerror("Error", str(e))
@@ -161,6 +177,8 @@ class CalculadoraFinanciera:
             self.resultado_label.config(text=f"TIR = {r * 100:.4f}%")
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+
 
 
 if __name__ == "__main__":
